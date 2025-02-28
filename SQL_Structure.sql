@@ -1,32 +1,32 @@
 CREATE TABLE User
 (
-  UserID INT NOT NULL,
-  UserFName INT NOT NULL,
-  UserLName INT NOT NULL,
-  Weight INT,
-  Height INT,
-  UserEmail INT NOT NULL,
-  UserPass INT NOT NULL,
-  Gender INT NOT NULL,
-  DoB INT,
+  UserID SERIAL NOT NULL,
+  UserFName VARCHAR(50) NOT NULL,
+  UserLName VARCHAR(50) NOT NULL,
+  Weight FLOAT,
+  Height FLOAT,
+  UserEmail VARCHAR(320) NOT NULL,
+  UserPass VARCHAR(64) NOT NULL,
+  Gender VARCHAR(6) NOT NULL,
+  DoB DATE,
   PRIMARY KEY (UserID)
 );
 
 CREATE TABLE Workout
 (
-  Duration INT,
-  WorkoutType INT NOT NULL,
-  Reps INT,
-  WeightLifted INT,
-  WorkoutID INT NOT NULL,
+  Duration FLOAT,
+  WorkoutType VARCHAR(100) NOT NULL,
+  Reps FLOAT,
+  WeightLifted FLOAT,
+  WorkoutID SERIAL NOT NULL,
   PRIMARY KEY (WorkoutID)
 );
 
 CREATE TABLE Meal
 (
-  MealID INT NOT NULL,
-  DateEaten INT NOT NULL,
-  MealName INT NOT NULL,
+  MealID SERIAL NOT NULL,
+  DateEaten DATE NOT NULL,
+  MealName VARCHAR(100) NOT NULL,
   UserID INT NOT NULL,
   PRIMARY KEY (MealID),
   FOREIGN KEY (UserID) REFERENCES User(UserID)
@@ -34,9 +34,9 @@ CREATE TABLE Meal
 
 CREATE TABLE Routine
 (
-  RoutineName INT NOT NULL,
-  DayOfWeek INT NOT NULL,
-  RoutineID INT NOT NULL,
+  RoutineName VARCHAR(100) NOT NULL,
+  DayOfWeek VARCHAR(12) NOT NULL,
+  RoutineID SERIAL NOT NULL,
   UserID INT NOT NULL,
   PRIMARY KEY (RoutineID),
   FOREIGN KEY (UserID) REFERENCES User(UserID)
@@ -44,10 +44,10 @@ CREATE TABLE Routine
 
 CREATE TABLE Drink
 (
-  DrinkType INT NOT NULL,
-  Amount INT NOT NULL,
-  DrinkCalDensity INT NOT NULL,
-  DrinkID INT NOT NULL,
+  DrinkType VARCHAR(100) NOT NULL,
+  Amount FLOAT NOT NULL,
+  DrinkCalDensity FLOAT NOT NULL,
+  DrinkID SERIAL NOT NULL,
   MealID INT NOT NULL,
   PRIMARY KEY (DrinkID),
   FOREIGN KEY (MealID) REFERENCES Meal(MealID)
@@ -55,10 +55,10 @@ CREATE TABLE Drink
 
 CREATE TABLE Ingredient
 (
-  IngredType INT NOT NULL,
-  IngredWeight INT NOT NULL,
-  FoodCalDensity INT NOT NULL,
-  IngredID INT NOT NULL,
+  IngredType VARCHAR(100) NOT NULL,
+  IngredWeight FLOAT NOT NULL,
+  FoodCalDensity FLOAT NOT NULL,
+  IngredID SERIAL NOT NULL,
   MealID INT NOT NULL,
   PRIMARY KEY (IngredID),
   FOREIGN KEY (MealID) REFERENCES Meal(MealID)
