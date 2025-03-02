@@ -1,3 +1,5 @@
+USE project_350;
+
 -- Delete data from ComposedOf table
 DELETE FROM ComposedOf WHERE RoutineID = 1 AND WorkoutID = 1;
 
