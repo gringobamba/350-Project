@@ -42,3 +42,20 @@ FROM Routine r
 LEFT JOIN ComposedOf c ON r.RoutineID = c.RoutineID
 LEFT JOIN Workout w ON c.WorkoutID = w.WorkoutID
 GROUP BY r.RoutineID, r.RoutineName, r.UserID;
+
+-- View for displaying MEAL info
+
+CREATE VIEW meal_view AS
+SELECT 
+  m.MealID,
+  m.MealName,
+  m.DateEaten,
+  m.UserID,
+  -- Calculates total calories from ingredients and drinks
+  SUM(i.IngredWeight * i.FoodCalDensity) AS TotalIngredientCalories,
+  SUM(d.Amount * d.DrinkCalDensity) AS TotalDrinkCalories
+FROM Meal m
+LEFT JOIN Ingredient i ON m.MealID = i.MealID
+LEFT JOIN Drink d ON m.MealID = d.MealID
+GROUP BY m.MealID, m.MealName, m.DateEaten, m.UserID;
+
