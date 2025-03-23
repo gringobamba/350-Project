@@ -36,7 +36,9 @@ SELECT
   r.RoutineID,
   r.RoutineName,
   r.UserID,
+  -- Num of workouts associated with routine
   COUNT(c.WorkoutID) AS WorkoutCountTotal,
+  -- Total time spent on workouts within the routine
   SUM(w.Duration) AS TotalDuration
 FROM Routine r
 LEFT JOIN ComposedOf c ON r.RoutineID = c.RoutineID
