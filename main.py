@@ -35,6 +35,24 @@ def get_all_items():
     result = cursor.fetchall() # Gets result from query
     conn.close() # Close the db connection (NOTE: You should do this after each query, otherwise your database may become locked)
     return result
+
+def sql_script_execution(file_path):
+    with open(file_path, 'r') as file:
+        sql_script = file.read()
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        for result in cursor.execute(sql_script, multi=True):
+            pass
+        conn.commit()
+        print(f"successfully executed script: {file_path}")
+    except Exception as e:
+        print(f"error executing script {file_path}: {e}")
+    finally:
+        cursor.close()
+        conn.close()
 # ------------------------ END FUNCTIONS ------------------------ #
 
 
@@ -65,9 +83,25 @@ def add_item():
     except Exception as e:
         flash(f"An error occurred: {str(e)}", "error") # Send the error message to the web page
         return redirect(url_for("home")) # Redirect to home
+    
+
+@app.route("/init-db", methods=["GET"])
+def init_db():
+    try:
+        sql_script_execution("SQL_structure_1.sql")
+        sql_script_execution("insert_script_1.sql")
+        sql_script_execution("delete_script_1.sql")
+        sql_script_execution("views.sql")
+        flash(f"initialization of database succeeded", "success")
+    except Exception as e:
+        flash(f"initialization of database failed: {str(e)}", "error")
+    return redirect(url_for("home"))
+
 # ------------------------ END ROUTES ------------------------ #
 
 
 # listen on port 8080
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=8080, debug=True) # TODO: Students PLEASE remove debug=True when you deploy this for production!!!!!
+    #this can also be the place where we have the sql_script_execution methods.
+    #it would allow it to just do it on start up
