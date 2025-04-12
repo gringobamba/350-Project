@@ -1,0 +1,16 @@
+services:
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: password
+      MARIA_DATABASE: 350-Project
+    ports:
+      - "3306:3306"
+  
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "3307:80"
+    depends_on:
+      - db
