@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Workout | Fitness App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Add Workout</h1>
+  </header>
+  <section>
+    {% if routines and routines|length > 0 %}
+      <form action="{{ url_for('save_workout') }}" method="post">
+        <label for="workout_type">Workout Type:</label>
+        <input type="text" id="workout_type" name="workout_type" required>
+
+        <label for="duration">Duration (minutes):</label>
+        <input type="number" id="duration" name="duration" step="0.1" required>
+
+        <label for="reps">Reps:</label>
+        <input type="number" id="reps" name="reps" step="1">
+
+        <label for="weight_lifted">Weight Lifted (lbs):</label>
+        <input type="number" id="weight_lifted" name="weight_lifted" step="0.1">
+        
+        <!-- Dropdown to select a routine -->
+        <label for="routine_id">Select Routine:</label>
+        <select id="routine_id" name="routine_id" required>
+          {% for routine in routines %}
+            <option value="{{ routine.RoutineID }}">
+              {{ routine.RoutineName }} ({{ routine.DayOfWeek }})
+            </option>
+          {% endfor %}
+        </select>
+
+        <button type="submit">Save Workout</button>
+      </form>
+    {% else %}
+      <p>No routines found. Please <a href="{{ url_for('add_routine') }}">create a routine</a> first.</p>
+    {% endif %}
+    
+    <!-- Link Back to Home -->
+    <a class="button" href="{{ url_for('home') }}">Back to Dashboard</a>
+    <a class="button" href="{{ url_for('add_routine') }}">Add new routine</a>
+  </section>
+</body>
+</html>
+
+
+

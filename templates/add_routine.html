@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Routine | Fitness App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Add Routine</h1>
+  </header>
+  <section>
+    <form action="{{ url_for('save_routine') }}" method="post">
+      <label for="routine_name">Routine Name:</label>
+      <input type="text" id="routine_name" name="routine_name" required>
+
+      <!-- User drop down menu -->
+       
+      <label for="day_of_week">Day of Week:</label>
+      <select id="day_of_week" name="day_of_week" required>
+        <option value="Monday">Monday</option>
+        <option value="Tuesday">Tuesday</option>
+        <option value="Wednesday">Wednesday</option>
+        <option value="Thursday">Thursday</option>
+        <option value="Friday">Friday</option>
+        <option value="Saturday">Saturday</option>
+        <option value="Sunday">Sunday</option>
+      </select>
+
+      <button type="submit">Create Routine</button>
+    </form>
+    <br>
+    <a class="button" href="{{ url_for('home') }}">Back to Dashboard</a>
+  </section>
+</body>
+</html>

@@ -38,6 +38,28 @@ def get_all_items():
     conn.close() # Close the db connection (NOTE: You should do this after each query, otherwise your database may become locked)
     return result
 
+# Retrieves all workouts according to logged in user
+def get_all_workouts(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM workout_view WHERE UserID = %s"
+    cursor.execute(query, (user_id,))
+    workouts = cursor.fetchall()
+    print("DEBUG: Found workouts for user", user_id, ":", workouts)
+    conn.close()
+    return workouts
+
+# Retrieves routine information based on logged in user
+def get_user_routines(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM Routine WHERE UserID = %s"
+    cursor.execute(query, (user_id,))
+    routines = cursor.fetchall()
+    conn.close()
+    return routines
+
+
 # Get all info on the user via the user VIEW
 def get_user_data(user_id):
     conn = get_db_connection()
@@ -160,6 +182,95 @@ def init_db():
     except Exception as e:
         flash(f"initialization of database failed: {str(e)}", "error")
     return redirect(url_for("home"))
+
+@app.route("/add_workout", methods=["GET"])
+def add_workout():
+    user_id = session.get("user_id")
+    routines = get_user_routines(user_id)
+    return render_template("add_workout.html", routines=routines)
+
+@app.route("/save_workout", methods=["POST"])
+def save_workout():
+    # Retrieve form data
+    workout_type = request.form.get("workout_type")
+    duration = float(request.form.get("duration"))
+    reps = request.form.get("reps")
+    weight_lifted = request.form.get("weight_lifted")
+    routine_id = request.form.get("routine_id")  # Routine selection from the form
+
+    reps = int(reps) if reps else None
+    weight_lifted = float(weight_lifted) if weight_lifted else None
+
+    # Insert into Workout table
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    insert_query = """
+        INSERT INTO Workout (WorkoutType, Duration, Reps, WeightLifted)
+        VALUES (%s, %s, %s, %s)
+    """
+    cursor.execute(insert_query, (workout_type, duration, reps, weight_lifted))
+    conn.commit()
+    workout_id = cursor.lastrowid  # Retrieve the WorkoutID for the inserted workout
+
+    # Links workout with routine
+    if routine_id:
+        insert_composedof_query = """
+            INSERT INTO ComposedOf (RoutineID, WorkoutID)
+            VALUES (%s, %s)
+        """
+        cursor.execute(insert_composedof_query, (routine_id, workout_id))
+        conn.commit()
+
+    cursor.close()
+    conn.close()
+    
+    flash("Workout added successfully", "success")
+    return redirect(url_for('home'))
+
+@app.route("/add_routine", methods=["GET"])
+def add_routine():
+    # Render the routine creation form
+    return render_template("add_routine.html")
+
+@app.route("/save_routine", methods=["POST"])
+def save_routine():
+    # Retrieve form data
+    routine_name = request.form.get("routine_name")
+    day_of_week = request.form.get("day_of_week")
+    
+    # Make sure user is logged in 
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("Please log in.", "error")
+        return redirect(url_for("login"))
+    
+    # Insert the new routine into the Routine table
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    insert_query = """
+        INSERT INTO Routine (RoutineName, DayOfWeek, UserID)
+        VALUES (%s, %s, %s)
+    """
+    cursor.execute(insert_query, (routine_name, day_of_week, user_id))
+    conn.commit()
+    routine_id = cursor.lastrowid  
+    cursor.close()
+    conn.close()
+    
+    flash("Routine created successfully.", "success")
+    return redirect(url_for("home"))
+
+@app.route("/view_workouts", methods=["GET"])
+def view_workouts():
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("Please log in to view workouts.", "error")
+        return redirect(url_for("login"))
+    workouts = get_all_workouts(user_id)
+    return render_template("view_workouts.html", workouts=workouts)
+
+
+
 
 # ------------------------ END ROUTES ------------------------ #
 

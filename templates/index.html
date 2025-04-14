@@ -25,5 +25,14 @@
     <p>DOB: {{ user.DoB }}</p>
     <p>Height: {{ user.Height }} cm</p>
     <p>Weight: {{ user.Weight }} kg</p>
+
+    <div class="button-container">
+        <a class="button" href="{{ url_for('add_workout') }}">Add Workout</a>
+    </div>
+
+    <div class="button-container">
+        <a class="button" href="{{ url_for('view_workouts') }}">View Workouts</a>
+    </div>
+
 </body>
 </html>

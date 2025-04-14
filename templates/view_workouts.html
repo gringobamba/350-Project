@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Workouts | Fitness App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>My Workouts</h1>
+  </header>
+  <section>
+    {% if workouts %}
+      <ul>
+        {% for workout in workouts %}
+          <li>
+            <strong>{{ workout.WorkoutType }}</strong>
+            - Duration: {{ workout.Duration }} minutes
+            {% if workout.Reps is not none %}, Reps: {{ workout.Reps }}{% endif %}
+            {% if workout.WeightLifted is not none %}, Weight: {{ workout.WeightLifted }} lbs{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Sorry, No workouts associated with your account! Please create one.</p>
+    {% endif %}
+  </section>
+  <footer>
+    <a class="button" href="{{ url_for('home') }}">Back to Home</a>
+  </footer>
+</body>
+</html>
