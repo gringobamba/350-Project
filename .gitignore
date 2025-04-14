@@ -1,1 +1,2 @@
+#skip the .env file with git to facilitate differing local environments
 .env
