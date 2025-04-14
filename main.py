@@ -38,6 +38,26 @@ def get_all_items():
     conn.close() # Close the db connection (NOTE: You should do this after each query, otherwise your database may become locked)
     return result
 
+def get_all_workouts(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    # This query filters workouts by the logged-in user's ID (from Routine.UserID)
+    query = "SELECT * FROM workout_view WHERE UserID = %s"
+    cursor.execute(query, (user_id,))
+    workouts = cursor.fetchall()
+    print("DEBUG: Found workouts for user", user_id, ":", workouts)
+    conn.close()
+    return workouts
+
+def get_user_routines(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM Routine WHERE UserID = %s"
+    cursor.execute(query, (user_id,))
+    routines = cursor.fetchall()
+    conn.close()
+    return routines
+
 # Get all info on the user via the user VIEW
 def get_user_data(user_id):
     conn = get_db_connection()
