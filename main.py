@@ -25,19 +25,6 @@ def get_db_connection():
     )
     return conn
 
-# Get all items from the "items" table of the db
-def get_all_items():
-    # Create a new database connection for each request
-    conn = get_db_connection()  # Create a new database connection
-    cursor = conn.cursor() # Creates a cursor for the connection, you need this to do queries
-    # Query the db
-    query = "SELECT name, quantity FROM items"
-    cursor.execute(query)
-    # Get result and close
-    result = cursor.fetchall() # Gets result from query
-    conn.close() # Close the db connection (NOTE: You should do this after each query, otherwise your database may become locked)
-    return result
-
 # Get all info on the user via the user VIEW
 def get_user_data(user_id):
     conn = get_db_connection()
@@ -69,14 +56,17 @@ def sql_script_execution(file_path):
 
 
 # ------------------------ BEGIN ROUTES ------------------------
+# forces the user to login if they navigate to a secure page without a session
 @app.before_request
 def require_login():
     allowed_routes = ['login', 'register', 'static']
     if request.endpoint not in allowed_routes and 'user_id' not in session:
         return redirect(url_for('login'))
 
+# HOMEPAGE ROUTE
 @app.route("/", methods=["GET"])
 def home():
+    # Checks if user has a session
     if 'user_id' not in session:
         return redirect(url_for('login'))
     
@@ -85,10 +75,11 @@ def home():
     user_data = get_user_data(user_id) # Call defined function to get all the current user's data
     return render_template("index.html", user=user_data) # Return the user's homepage
     
+# REGISTRATION ROUTE
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     error = None
-    if request.method == 'POST':
+    if request.method == 'POST': # if the user submits the registration form
         fname = request.form['fname']
         lname = request.form['lname']
         email = request.form['email']
@@ -121,10 +112,11 @@ def register():
 
     return render_template('register.html', error=error)
 
+# LOGIN ROUTE
 @app.route("/login", methods=["GET", "POST"])
 def login():
     error = None
-    if request.method == 'POST':
+    if request.method == 'POST': # If user submits the login form
         email = request.form['email']
         password = request.form['password']
 
@@ -143,6 +135,7 @@ def login():
     
     return render_template('login.html', error=error)
 
+# LOGOUT ROUTE
 @app.route('/logout')
 def logout():
     session.clear()
