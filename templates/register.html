@@ -1,0 +1,12 @@
+<form method="POST">
+    <input name="fname" placeholder="First Name" required>
+    <input name="lname" placeholder="Last Name" required>
+    <input name="email" type="email" placeholder="Email" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <input name="gender" placeholder="Gender (Male/Female)" required>
+    <input name="dob" type="date" required>
+    <input name="height" type="number" placeholder="Height (cm)" required>
+    <input name="weight" type="number" placeholder="Weight (kg)" required>
+    <button type="submit">Register</button>
+    {% if error %}<p>{{ error }}</p>{% endif %}
+  </form>

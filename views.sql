@@ -1,4 +1,6 @@
--- View for displaying USER info
+USE project_350;
+
+-- View for displaying AppUSER info
 
 CREATE VIEW user_view AS
 SELECT 
@@ -10,7 +12,7 @@ SELECT
   DoB, 
   Height, 
   Weight
-FROM User;
+FROM AppUser;
 
 -- View for displaying WORKOUT info
 

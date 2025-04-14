@@ -1,7 +1,7 @@
 USE project_350;
 
--- Insert dummy data into User table
-INSERT INTO User (UserFName, UserLName, Weight, Height, UserEmail, UserPass, Gender, DoB)
+-- Insert dummy data into AppUser table
+INSERT INTO AppUser (UserFName, UserLName, Weight, Height, UserEmail, UserPass, Gender, DoB)
 VALUES ('John', 'Doe', 70.5, 175.3, 'john.doe@example.com', 'password123', 'Male', '1990-01-01');
 
 -- Insert dummy data into Workout table

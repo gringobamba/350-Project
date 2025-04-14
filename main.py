@@ -1,7 +1,8 @@
 import os
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 import mysql.connector
 from dotenv import load_dotenv
+from flask_bcrypt import Bcrypt
 
 
 # Load environment variables from .env file
@@ -10,6 +11,7 @@ load_dotenv()
 # Initialize the flask app
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET")
+bcrypt = Bcrypt(app)
 
 
 # ------------------------ BEGIN FUNCTIONS ------------------------ #
@@ -36,6 +38,16 @@ def get_all_items():
     conn.close() # Close the db connection (NOTE: You should do this after each query, otherwise your database may become locked)
     return result
 
+# Get all info on the user via the user VIEW
+def get_user_data(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("SELECT * FROM user_view WHERE UserID = %s", (user_id,))
+
+    result = cursor.fetchone()
+    conn.close()
+    return result
+
 def sql_script_execution(file_path):
     with open(file_path, 'r') as file:
         sql_script = file.read()
@@ -56,35 +68,87 @@ def sql_script_execution(file_path):
 # ------------------------ END FUNCTIONS ------------------------ #
 
 
-# ------------------------ BEGIN ROUTES ------------------------ #
-# EXAMPLE OF GET REQUEST
+# ------------------------ BEGIN ROUTES ------------------------
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'register', 'static']
+    if request.endpoint not in allowed_routes and 'user_id' not in session:
+        return redirect(url_for('login'))
+
 @app.route("/", methods=["GET"])
 def home():
-    items = get_all_items() # Call defined function to get all items
-    return render_template("index.html", items=items) # Return the page to be rendered
-
-# EXAMPLE OF POST REQUEST
-@app.route("/new-item", methods=["POST"])
-def add_item():
-    try:
-        # Get items from the form
-        data = request.form
-        item_name = data["name"] # This is defined in the input element of the HTML form on index.html
-        item_quantity = data["quantity"] # This is defined in the input element of the HTML form on index.html
-
-        # TODO: Insert this data into the database
-        
-        # Send message to page. There is code in index.html that checks for these messages
-        flash("Item added successfully", "success")
-        # Redirect to home. This works because the home route is named home in this file
-        return redirect(url_for("home"))
-
-    # If an error occurs, this code block will be called
-    except Exception as e:
-        flash(f"An error occurred: {str(e)}", "error") # Send the error message to the web page
-        return redirect(url_for("home")) # Redirect to home
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
     
+    user_id = session['user_id']
 
+    user_data = get_user_data(user_id) # Call defined function to get all the current user's data
+    return render_template("index.html", user=user_data) # Return the user's homepage
+    
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    error = None
+    if request.method == 'POST':
+        fname = request.form['fname']
+        lname = request.form['lname']
+        email = request.form['email']
+        password = request.form['password']
+        gender = request.form['gender']
+        dob = request.form['dob']
+        height = request.form['height']
+        weight = request.form['weight']
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        # Check if user already exists
+        cursor.execute("SELECT * FROM AppUser WHERE UserEmail = %s", (email,))
+        existing = cursor.fetchone()
+        if existing:
+            error = 'Email already in use.'
+        else:
+            hashed_pw = bcrypt.generate_password_hash(password).decode('utf-8')
+            cursor.execute("""
+                INSERT INTO AppUser (UserFName, UserLName, UserEmail, UserPass, Gender, DoB, Height, Weight)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            """, (fname, lname, email, hashed_pw, gender, dob, height, weight))
+            conn.commit()
+            session['user_id'] = cursor.lastrowid
+            return redirect(url_for('home'))
+
+        cursor.close()
+        conn.close()
+
+    return render_template('register.html', error=error)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM AppUser WHERE UserEmail = %s", (email,))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
+
+        if user and bcrypt.check_password_hash(user['UserPass'], password):
+            session['user_id'] = user['UserID']
+            return redirect(url_for('home'))
+        else:
+            error = 'Invalid credentials'
+    
+    return render_template('login.html', error=error)
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect(url_for('login'))
+
+# INITIAL POPULATION OF THE DATABASE. REQUIRES THAT THE DB WAS CREATED MANUALLY FIRST.
 @app.route("/init-db", methods=["GET"])
 def init_db():
     try:

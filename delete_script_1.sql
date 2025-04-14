@@ -18,5 +18,5 @@ DELETE FROM Meal WHERE MealID = 1;
 -- Delete data from Workout table
 DELETE FROM Workout WHERE WorkoutID = 1;
 
--- Delete data from User table
-DELETE FROM User WHERE UserID = 1;
+-- Delete data from AppUser table
+DELETE FROM AppUser WHERE UserID = 1;
