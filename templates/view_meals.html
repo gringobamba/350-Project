@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>View Meals | Fitness App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Your Meals</h1>
+  </header>
+  <section>
+    {% if meals and meals|length > 0 %}
+      <ul>
+        {% for meal in meals %}
+          <li>
+            <strong>{{ meal.MealName }}</strong> on {{ meal.DateEaten }}<br>
+            {% if meal.TotalIngredientCalories is not none %}Ingredient Calories: {{ meal.TotalIngredientCalories }}{% endif %}<br>
+            {% if meal.TotalDrinkCalories is not none %}Drink Calories: {{ meal.TotalDrinkCalories }}{% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>You have not logged any meals yet. <a href="{{ url_for('add_meal') }}">Add a meal</a>.</p>
+    {% endif %}
+  </section>
+  <footer>
+    <a class="button" href="{{ url_for('home') }}">Back to Home Page</a>
+  </footer>
+</body>
+</html>

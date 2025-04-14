@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Meal | Fitness App</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Add Meal</h1>
+  </header>
+  <section>
+    <form action="{{ url_for('save_meal') }}" method="post">
+      <label for="meal_name">Meal Name:</label>
+      <input type="text" id="meal_name" name="meal_name" required>
+
+      <label for="date_eaten">Date Eaten:</label>
+      <input type="date" id="date_eaten" name="date_eaten" required>
+
+      <h3>Ingredient Details</h3>
+      <label for="ingredient_type">Ingredient Type:</label>
+      <input type="text" id="ingredient_type" name="ingredient_type">
+
+      <label for="ingredient_weight">Ingredient Weight (g):</label>
+      <input type="number" id="ingredient_weight" name="ingredient_weight" step="0.1">
+
+      <label for="food_cal_density">Food Calorie Density (cal/g):</label>
+      <input type="number" id="food_cal_density" name="food_cal_density" step="0.1">
+
+      <button type="submit">Save Meal</button>
+    </form>
+    <!-- Link back to Home -->
+    <a class="button" href="{{ url_for('home') }}">Back to Home Page</a>
+  </section>
+</body>
+</html>
+

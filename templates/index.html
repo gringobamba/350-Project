@@ -26,12 +26,21 @@
     <p>Height: {{ user.Height }} cm</p>
     <p>Weight: {{ user.Weight }} kg</p>
 
+    <!-- Links to add and view workouts and meals-->
     <div class="button-container">
         <a class="button" href="{{ url_for('add_workout') }}">Add Workout</a>
     </div>
 
     <div class="button-container">
         <a class="button" href="{{ url_for('view_workouts') }}">View Workouts</a>
+    </div>
+
+    <div class="button-container">
+        <a class="button" href="{{ url_for('add_meal') }}">Add a Meal</a>
+    </div>
+
+    <div class="button-container">
+        <a class="button" href="{{ url_for('view_meals') }}">View Meals</a>
     </div>
 
 </body>

@@ -58,6 +58,15 @@ def get_user_routines(user_id):
     conn.close()
     return routines
 
+def get_all_meals(user_id):
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    query = "SELECT * FROM meal_view WHERE UserID = %s"
+    cursor.execute(query, (user_id,))
+    meals = cursor.fetchall()
+    conn.close()
+    return meals
+
 # Get all info on the user via the user VIEW
 def get_user_data(user_id):
     conn = get_db_connection()
@@ -187,12 +196,14 @@ def init_db():
         flash(f"initialization of database failed: {str(e)}", "error")
     return redirect(url_for("home"))
 
+# Route to add workout page 
 @app.route("/add_workout", methods=["GET"])
 def add_workout():
     user_id = session.get("user_id")
     routines = get_user_routines(user_id)
     return render_template("add_workout.html", routines=routines)
 
+# Route to save user workout
 @app.route("/save_workout", methods=["POST"])
 def save_workout():
     # Retrieve form data
@@ -231,11 +242,13 @@ def save_workout():
     flash("Workout added successfully", "success")
     return redirect(url_for('home'))
 
+# Routes to add routine page
 @app.route("/add_routine", methods=["GET"])
 def add_routine():
     # Render the routine creation form
     return render_template("add_routine.html")
 
+# Route to save user routines
 @app.route("/save_routine", methods=["POST"])
 def save_routine():
     # Retrieve form data
@@ -264,6 +277,7 @@ def save_routine():
     flash("Routine created successfully.", "success")
     return redirect(url_for("home"))
 
+# Route to view created workouts
 @app.route("/view_workouts", methods=["GET"])
 def view_workouts():
     user_id = session.get("user_id")
@@ -272,6 +286,77 @@ def view_workouts():
         return redirect(url_for("login"))
     workouts = get_all_workouts(user_id)
     return render_template("view_workouts.html", workouts=workouts)
+
+# Route to view created meals
+@app.route("/view_meals", methods=["GET"])
+def view_meals():
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("Please log in to view meals.", "error")
+        return redirect(url_for("login"))
+    meals = get_all_meals(user_id)
+    return render_template("view_meals.html", meals=meals)
+
+# Route to view created routines 
+@app.route("/view_routines", methods=["GET"])
+def view_routines():
+    user_id = session.get("user_id")
+    if not user_id:
+        flash("Please log in to view routines.", "error")
+        return redirect(url_for("login"))
+    routines = get_user_routines(user_id)
+    return render_template("view_routines.html", routines=routines)
+
+@app.route("/add_meal", methods=["GET"])
+def add_meal():
+    return render_template("add_meal.html")
+
+# Route to save meal with optional ingredients 
+@app.route("/save_meal", methods=["POST"])
+def save_meal():
+    meal_name = request.form.get("meal_name")
+    date_eaten = request.form.get("date_eaten")
+    user_id = session.get("user_id")
+    
+    ingredient_type = request.form.get("ingredient_type")
+    ingredient_weight = request.form.get("ingredient_weight")
+    food_cal_density = request.form.get("food_cal_density")
+    
+    if not meal_name or not date_eaten or not user_id:
+        flash("Please provide all required meal details.", "error")
+        return redirect(url_for("add_meal"))
+    
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    try:
+        insert_meal_query = """
+            INSERT INTO Meal (MealName, DateEaten, UserID)
+            VALUES (%s, %s, %s)
+        """
+        cursor.execute(insert_meal_query, (meal_name, date_eaten, user_id))
+        conn.commit()
+        meal_id = cursor.lastrowid
+        
+        if ingredient_type and ingredient_weight and food_cal_density:
+            ingredient_weight = float(ingredient_weight)
+            food_cal_density = float(food_cal_density)
+            insert_ingredient_query = """
+                INSERT INTO Ingredient (IngredType, IngredWeight, FoodCalDensity, MealID)
+                VALUES (%s, %s, %s, %s)
+            """
+            cursor.execute(insert_ingredient_query, (ingredient_type, ingredient_weight, food_cal_density, meal_id))
+            conn.commit()
+        
+        flash("Meal added successfully", "success")
+    except Exception as e:
+        conn.rollback()
+        flash(f"An error occurred while adding the meal: {str(e)}", "error")
+    finally:
+        cursor.close()
+        conn.close()
+    
+    return redirect(url_for("home"))
 
 
 
