@@ -7,6 +7,12 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+  {% if session.get('user_id') %}
+    <form action="{{ url_for('logout') }}" method="get">
+      <button type="submit">Logout</button>
+    </form>
+  {% endif %}
+
   <header>
     <h1>Your Meals</h1>
   </header>

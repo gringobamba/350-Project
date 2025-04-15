@@ -17,6 +17,12 @@
         {% endif %}
     {% endwith %}
 
+    {% if session.get('user_id') %}
+        <form action="{{ url_for('logout') }}" method="get">
+            <button type="submit">Logout</button>
+        </form>
+    {% endif %}
+
     <!-- Code for displaying the user's data -->
 
     <h1>Welcome, {{ user.UserFName }} {{ user.UserLName }}</h1>
