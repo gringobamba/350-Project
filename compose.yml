@@ -1,6 +1,6 @@
 services:
   db:
-    image: mariadb
+    image: MySQL/mysql
     restart: always
     environment:
       MARIADB_ROOT_PASSWORD: password
