@@ -1,66 +1,74 @@
-/* =================================
-   Existing alert message styles
-   ================================= */
-   .alert {
-    padding: 10px; 
-    margin-bottom: 15px; 
-    border-radius: 4px; 
+
+:root {
+    --background-color: #1f1f1f;  /* Overall dark background */
+    --card-bg: #2b2b2b;          /* Slightly lighter section background */
+    --accent-color: #32cd32;     /* Lime green accent */
+    --text-color: #dddddd;       /* Default text color */
+    --border-color: #444444;     /* For input borders, etc. */
+    --error-color: #ff4d4d;      /* For error alerts */
+    --success-bg: #264d26;       /* For success alerts background */
+    --success-text: #32cd32;     /* For success alert text/border */
+    --info-bg: #1e2d40;          /* For info alert background */
+    --info-text: #4da6ff;        /* For info alert text/border */
 }
 
-.alert.success {
-    color: #3c763d;
-    border: 1px solid #3c763d;
-    background-color: #dff0d8;
-}
 
-.alert.error {
-    color: red;
-    border: 1px solid red;
-    background-color: #ffdede;
-}
-
-.alert.info {
-    color: rgb(77, 103, 190);
-    border: 1px solid rgb(77, 103, 190);
-    background-color: #d0e1f5;
-}
-
-/* =================================
-   Base Styles
-   ================================= */
 html, body {
+    height: 100%;
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif; /* Replace with your preferred font */
-    background-color: #f5f5f5;
-    color: #333;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    font-family: Arial, sans-serif; /* Choose your preferred font */
+}
+
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Vertical center */
+    align-items: center;     /* Horizontal center */
 }
 
 header {
-    background-color: #222;
-    color: #fff;
-    padding: 10px 15px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: var(--card-bg);
+    color: var(--accent-color);
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    /* Optional shadow or border */
+    border-bottom: 1px solid var(--border-color);
 }
 
 h1, h2, h3, h4 {
     margin: 0;
-    padding: 10px 0;
+    padding: 0;
 }
 
-/* Spacing around main content sections */
 section {
     margin: 20px;
+    width: 100%;
+    max-width: 800px; /* Keep content from going super wide */
+    box-sizing: border-box;
 }
 
-/* =================================
-   Form Styles
-   ================================= */
+footer {
+    margin-top: 20px;
+    text-align: center;
+    color: var(--accent-color);
+}
+
 form {
-    background-color: #fff;
+    background-color: var(--card-bg);
     padding: 20px;
     border-radius: 4px;
     margin-bottom: 20px;
-    max-width: 400px; /* Set a max width to keep forms contained */
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 
 label {
@@ -68,6 +76,7 @@ label {
     margin-top: 10px;
     margin-bottom: 5px;
     font-weight: bold;
+    color: var(--accent-color);
 }
 
 input[type="text"],
@@ -78,69 +87,92 @@ input[type="number"],
 select {
     width: 100%;
     padding: 8px;
-    box-sizing: border-box;
     margin-bottom: 15px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color);
     border-radius: 4px;
+    background-color: #333;
+    color: #ccc;
+    box-sizing: border-box;
+}
+
+input::placeholder {
+    color: #777; /* Slightly lighter placeholder text */
 }
 
 button[type="submit"],
 button[type="button"] {
-    padding: 8px 16px;
+    padding: 10px 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    background-color: #007bff;
-    color: #fff;
+    background-color: var(--accent-color);
+    color: #000; /* Dark text on lime green */
     font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
 button[type="submit"]:hover,
 button[type="button"]:hover {
-    background-color: #0056b3;
+    background-color: #28a128; /* Slightly darker lime on hover */
 }
 
-/* =================================
-   Button & Link Styles
-   ================================= */
-/* You already have some <a class="button"> elements. Style them consistently here: */
 .button {
     display: inline-block;
-    padding: 8px 16px;
+    padding: 10px 16px;
     margin: 8px 0;
-    background-color: #007bff;
-    color: #fff;
+    background-color: var(--accent-color);
+    color: #000;
     text-decoration: none;
     border-radius: 4px;
     font-weight: bold;
+    transition: background-color 0.3s ease;
 }
 
 .button:hover {
-    background-color: #0056b3;
+    background-color: #28a128;
 }
 
-/* Optional container around multiple buttons. */
 .button-container {
     margin: 10px 0;
 }
 
-/* =================================
-   Lists and General Layout
-   ================================= */
 ul {
-    list-style: none; 
+    list-style: none;
     padding-left: 0;
 }
 
 li {
-    background-color: #fff;
+    background-color: var(--card-bg);
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 4px;
+    box-sizing: border-box;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Basic footer styling */
-footer {
-    margin-top: 20px;
-    text-align: center;
+.alert {
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 4px;
+    color: #ffffff; /* Default text color for alerts */
+    border: 1px solid;
+    box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
+.alert.success {
+    background-color: var(--success-bg);
+    border-color: var(--success-text);
+    color: var(--success-text);
+}
+
+.alert.error {
+    background-color: #3b1f1f; /* Dark red background for error */
+    border-color: var(--error-color);
+    color: var(--error-color);
+}
+
+.alert.info {
+    background-color: var(--info-bg);
+    border-color: var(--info-text);
+    color: var(--info-text);
 }
