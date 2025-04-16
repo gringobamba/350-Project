@@ -321,6 +321,10 @@ def save_meal():
     ingredient_type = request.form.get("ingredient_type")
     ingredient_weight = request.form.get("ingredient_weight")
     food_cal_density = request.form.get("food_cal_density")
+
+    drink_type = request.form.get("drink_type")
+    drink_amount = request.form.get("drink_amount")
+    drink_cal_density = request.form.get("drink_cal_density")
     
     if not meal_name or not date_eaten or not user_id:
         flash("Please provide all required meal details.", "error")
@@ -346,6 +350,16 @@ def save_meal():
                 VALUES (%s, %s, %s, %s)
             """
             cursor.execute(insert_ingredient_query, (ingredient_type, ingredient_weight, food_cal_density, meal_id))
+            conn.commit()
+
+        if drink_type and drink_amount and drink_cal_density:
+            drink_amount = float(drink_amount)
+            drink_cal_density = float(drink_cal_density)
+            insert_drink_query = """
+                INSERT INTO Drink (DrinkType, Amount, DrinkCalDensity, MealID)
+                VALUES (%s, %s, %s, %s)
+            """
+            cursor.execute(insert_drink_query, (drink_type, drink_amount, drink_cal_density, meal_id))
             conn.commit()
         
         flash("Meal added successfully", "success")
