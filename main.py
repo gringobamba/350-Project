@@ -380,6 +380,4 @@ def save_meal():
 
 # listen on port 8080
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080, debug=True) # TODO: Students PLEASE remove debug=True when you deploy this for production!!!!!
-    #this can also be the place where we have the sql_script_execution methods.
-    #it would allow it to just do it on start up
+    app.run(host="0.0.0.0", port=8080)
